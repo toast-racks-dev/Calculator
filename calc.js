@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const display = document.getElementById("display");
+  const history = document.getElementById("history");
   const numberButtons = document.querySelectorAll(".number-btn");
   const symbolButtons = document.querySelectorAll(".symbol");
   const clearButton = document.querySelector(".clear");
@@ -33,12 +34,15 @@ document.addEventListener("DOMContentLoaded", () => {
             previousInput = currentInput;
             operator = symbol;
             currentInput = "";
+            updateHistory();
           } else {
             calculate();
             operator = symbol;
+            updateHistory();
           }
         } else if (previousInput !== "") {
           operator = symbol;
+          updateHistory();
         }
       }
     });
@@ -49,10 +53,19 @@ document.addEventListener("DOMContentLoaded", () => {
     previousInput = "";
     operator = "";
     updateDisplay();
+    updateHistory();
   });
 
   function updateDisplay() {
     display.value = currentInput || previousInput || "0";
+  }
+
+  function updateHistory() {
+    if (previousInput && operator) {
+      history.textContent = `${previousInput} ${operator}`;
+    } else {
+      history.textContent = "";
+    }
   }
 
   function calculate() {
@@ -61,6 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const current = parseFloat(currentInput);
 
     if (isNaN(prev) || isNaN(current)) return;
+
+    // Show the full expression in history
+    history.textContent = `${previousInput} ${operator} ${currentInput} =`;
 
     switch (operator) {
       case "+":
